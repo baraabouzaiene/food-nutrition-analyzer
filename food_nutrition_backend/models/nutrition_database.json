@@ -1,0 +1,62 @@
+{
+  "pizza": {
+    "calories": 266,
+    "protein": 11,
+    "carbs": 33,
+    "fats": 10
+  },
+  "hamburger": {
+    "calories": 295,
+    "protein": 17,
+    "carbs": 28,
+    "fats": 14
+  },
+  "donuts": {
+    "calories": 452,
+    "protein": 5,
+    "carbs": 51,
+    "fats": 25
+  },
+  "apple_pie": {
+    "calories": 237,
+    "protein": 2,
+    "carbs": 34,
+    "fats": 11
+  },
+  "sushi": {
+    "calories": 143,
+    "protein": 6,
+    "carbs": 21,
+    "fats": 3.5
+  },
+  "chocolate_cake": {
+    "calories": 371,
+    "protein": 5,
+    "carbs": 50,
+    "fats": 17
+  },
+  "french_fries": {
+    "calories": 312,
+    "protein": 3.4,
+    "carbs": 41,
+    "fats": 15
+  },
+  "ice_cream": {
+    "calories": 207,
+    "protein": 3.5,
+    "carbs": 24,
+    "fats": 11
+  },
+  "steak": {
+    "calories": 271,
+    "protein": 25,
+    "carbs": 0,
+    "fats": 19
+  },
+  "caesar_salad": {
+    "calories": 190,
+    "protein": 7,
+    "carbs": 10,
+    "fats": 14
+  }
+}
