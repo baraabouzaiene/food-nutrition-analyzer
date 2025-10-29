@@ -52,9 +52,9 @@ def preprocess_image(image):
     
     return img_array
 
-
+#  ~~~~~~~~~       model prediction
 def classify_image(image):
-    """Classify food using ONNX model"""
+    # using ONNX model
     if session is None:
         raise Exception("Model not loaded")
     
@@ -68,16 +68,19 @@ def classify_image(image):
     exp_preds = np.exp(predictions - np.max(predictions))
     probabilities = exp_preds / exp_preds.sum()
     
-    predicted_idx = np.argmax(probabilities)
-    confidence = float(probabilities[predicted_idx] * 100)
-    food_name = CLASS_NAMES[predicted_idx]
-    
-    return food_name, confidence
+    #predicted_idx = np.argmax(probabilities)
+    predicted_idx = np.argsort(probabilities)[-3:][::-1]
+    #confidence = float(probabilities[predicted_idx] * 100)
+    #food_name = CLASS_NAMES[predicted_idx]
+    # predictions=arr[predicted_idx] : WRONGGGG
+    predictions=[{'food_name': CLASS_NAMES[idx], 'confidence': round(float(probabilities[idx] * 100), 2)} for idx in predicted_idx]
 
+    #return food_name, confidence
+    return predictions
+
+## ~~~~~~~~~~~~~~~~~~~~                 Get nutrition with API + fallback              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def get_nutrition(food_name):
-    """Get nutrition with API + fallback"""
-    # Try USDA API first
     try:
         search_url = f"{USDA_BASE_URL}/foods/search"
         params = {'api_key': USDA_API_KEY, 'query': food_name, 'pageSize': 1}
@@ -131,25 +134,39 @@ def analyze_food(request):
         image = Image.open(image_file).convert('RGB')
         
         # Classify
-        food_name, confidence = classify_image(image)
+        #food_name, confidence = classify_image(image)
+        predictions=classify_image(image)
+        top_prediction = predictions[0]
+        food_name = top_prediction['food_name']
         
-        # Get nutrition
+        
+        confidence = top_prediction['confidence'] 
+      
+      
+        # Get nutrition for top  predictions only
         nutrition, source = get_nutrition(food_name)
+       
         
-        # Default portion (100g)
-        portion_grams = 100
-        
+        #portion_grams = request.data.get('weight',100)
+        #portion_grams = int(request.data.get('weight') or request.data.get('portion_grams') or 100)
+        try:
+            portion_grams = int(request.data.get('weight') or request.data.get('portion_grams') or 100)
+        except (ValueError, TypeError):
+            portion_grams = 100  # Default if conversion fails
+
+        percentage=portion_grams/100
         # Build response
         result = {
             'success': True,
-            'food_name': food_name,
+            'predictions': predictions,
+            #'food_name': food_name,
             'confidence': round(confidence, 2),
             'portion_grams': portion_grams,
             'nutrition': {
-                'calories': nutrition['calories'],
-                'protein': nutrition['protein'],
-                'carbs': nutrition['carbs'],
-                'fats': nutrition['fats']
+                'calories':round( nutrition['calories']*percentage,1),
+                'protein': round(nutrition['protein']*percentage,1),
+                'carbs': round(nutrition['carbs']*percentage,1),
+                'fats': round(nutrition['fats']*percentage,1)
             },
             'data_source': source
         }
