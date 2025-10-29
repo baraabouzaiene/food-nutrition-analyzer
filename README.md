@@ -304,7 +304,7 @@ This project is licensed under the MIT License.
 
 ## 👤 Author
 
-**[Your Name]**
+**Baraa Bouzaiene**
 - GitHub: (https://github.com/baraabouzaiene)
 - LinkedIn: www.linkedin.com/in/baraa-bouzaiene-75727b246
 
